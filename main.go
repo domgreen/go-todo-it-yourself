@@ -18,7 +18,7 @@ func main() {
 
 	cors := func(c *gin.Context) {
 		c.Writer.Header().Add("access-control-allow-origin", "*")
-		c.Writer.Header().Add("access-control-allow-headers", "accept, content-type")
+		c.Writer.Header().Add("access-control-allow-headers", "access-control-allow-origin, access-control-allow-headers")
 		c.Writer.Header().Add("access-control-allow-methods", "GET,HEAD,POST,DELETE,OPTIONS,PUT,PATCH")
 	}
 
