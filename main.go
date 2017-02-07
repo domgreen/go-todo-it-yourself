@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -34,7 +36,8 @@ func main() {
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
-		log.Print(c.Request.Body)
+		blah, _ := ioutil.ReadAll(c.Request.Body)
+		fmt.Printf("%s", string(blah))
 		c.String(http.StatusCreated, time.Now().String())
 	})
 
