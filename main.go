@@ -19,7 +19,7 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, time.Now())
+		c.String(http.StatusOK, time.Now().String())
 	})
 
 	r.Run(":" + port)
