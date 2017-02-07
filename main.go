@@ -22,12 +22,16 @@ func main() {
 		c.Writer.Header().Add("access-control-allow-methods", "GET,HEAD,POST,DELETE,OPTIONS,PUT,PATCH")
 	}
 
-	r := gin.Default()
-	r.Use(cors)
+	routes := gin.Default()
+	routes.Use(cors)
 
-	r.GET("/todos", func(c *gin.Context) {
+	routes.OPTIONS("/todos", func(c *gin.Context) {
 		c.String(http.StatusOK, time.Now().String())
 	})
 
-	r.Run(":" + port)
+	routes.GET("/todos", func(c *gin.Context) {
+		c.String(http.StatusOK, time.Now().String())
+	})
+
+	routes.Run(":" + port)
 }
