@@ -18,14 +18,14 @@ func main() {
 
 	cors := func(c *gin.Context) {
 		c.Writer.Header().Add("access-control-allow-origin", "*")
-		c.Writer.Header().Add("access-control-allow-headers", "access-control-allow-origin, access-control-allow-headers")
+		c.Writer.Header().Add("access-control-allow-headers", "Content-Type")
 		c.Writer.Header().Add("access-control-allow-methods", "GET,HEAD,POST,DELETE,OPTIONS,PUT,PATCH")
 	}
 
 	r := gin.Default()
 	r.Use(cors)
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/todos", func(c *gin.Context) {
 		c.String(http.StatusOK, time.Now().String())
 	})
 
