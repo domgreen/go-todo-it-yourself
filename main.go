@@ -34,6 +34,7 @@ func main() {
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
+		log.Print(c.Request.Body)
 		c.String(http.StatusCreated, time.Now().String())
 	})
 
