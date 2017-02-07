@@ -33,5 +33,9 @@ func main() {
 		c.String(http.StatusOK, time.Now().String())
 	})
 
+	routes.POST("/todos", func(c *gin.Context) {
+		c.String(http.StatusCreated, time.Now().String())
+	})
+
 	routes.Run(":" + port)
 }
