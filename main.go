@@ -16,7 +16,14 @@ func main() {
 		log.Fatal("$PORT must be set")
 	}
 
+	cors := func(c *gin.Context) {
+		c.Writer.Header().Add("access-control-allow-origin", "*")
+		c.Writer.Header().Add("access-control-allow-headers", "accept, content-type")
+		c.Writer.Header().Add("access-control-allow-methods", "GET,HEAD,POST,DELETE,OPTIONS,PUT,PATCH")
+	}
+
 	r := gin.Default()
+	r.Use(cors)
 
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, time.Now().String())
