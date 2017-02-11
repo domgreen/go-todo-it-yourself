@@ -36,7 +36,7 @@ func main() {
 	routes.OPTIONS("/todos", ok)
 
 	routes.GET("/todos", func(c *gin.Context) {
-		c.String(http.StatusOK, "{[]}")
+		c.String(http.StatusOK, "[]")
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
