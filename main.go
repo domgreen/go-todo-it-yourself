@@ -9,8 +9,9 @@ import (
 )
 
 type TodoItem struct {
-	Title string `json:"title"`
-	Order int    `json:"order"`
+	Title     string `json:"title"`
+	Order     int    `json:"order"`
+	Completed bool   `json:"completed"`
 }
 
 type Todo map[string]*TodoItem
