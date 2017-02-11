@@ -35,7 +35,9 @@ func main() {
 
 	routes.OPTIONS("/todos", ok)
 
-	routes.GET("/todos", ok)
+	routes.GET("/todos", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{})
+	})
 
 	routes.POST("/todos", func(c *gin.Context) {
 		template := TodoItem{}
