@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type todoItem struct {
-	Title string
-	Order int
+type TodoItem struct {
+	Title string `json:"title"`
+	Order int    `json:"order"`
 }
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
-		template := todoItem{}
+		template := TodoItem{}
 		err := c.BindJSON(&template)
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
