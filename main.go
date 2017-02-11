@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type todoItem struct {
+	Title string
+	Order int
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -36,9 +39,13 @@ func main() {
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
-		blah, _ := ioutil.ReadAll(c.Request.Body)
-		fmt.Printf("%s", string(blah))
-		c.String(http.StatusCreated, time.Now().String())
+		template := todoItem{}
+		err := c.BindJSON(&template)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+		}
+
+		c.JSON(http.StatusOK, template)
 	})
 
 	routes.Run(":" + port)
