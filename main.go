@@ -48,5 +48,9 @@ func main() {
 		c.JSON(http.StatusOK, template)
 	})
 
+	routes.DELETE("/todos", func(c *gin.Context) {
+		c.String(http.StatusNotFound, "")
+	})
+
 	routes.Run(":" + port)
 }
