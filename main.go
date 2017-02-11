@@ -27,6 +27,12 @@ func (t Todo) GetAll() []*TodoItem {
 	return items
 }
 
+func (t Todo) DeleteAll() {
+	for k := range t {
+		delete(t, k)
+	}
+}
+
 func main() {
 	todo := Todo{}
 
@@ -66,7 +72,10 @@ func main() {
 		c.JSON(http.StatusOK, template)
 	})
 
-	routes.DELETE("/todos", ok)
+	routes.DELETE("/todos", func(c *gin.Context) {
+		todo.DeleteAll()
+		c.String(http.StatusOK, "")
+	})
 
 	routes.Run(":" + port)
 }
