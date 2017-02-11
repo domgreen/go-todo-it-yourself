@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +15,10 @@ type TodoItem struct {
 
 func main() {
 	port := os.Getenv("PORT")
+
+	ok := func(c *gin.Context) {
+		c.String(http.StatusOK, "")
+	}
 
 	if port == "" {
 		log.Fatal("$PORT must be set")
@@ -30,13 +33,9 @@ func main() {
 	routes := gin.Default()
 	routes.Use(cors)
 
-	routes.OPTIONS("/todos", func(c *gin.Context) {
-		c.String(http.StatusOK, time.Now().String())
-	})
+	routes.OPTIONS("/todos", ok)
 
-	routes.GET("/todos", func(c *gin.Context) {
-		c.String(http.StatusOK, time.Now().String())
-	})
+	routes.GET("/todos", ok)
 
 	routes.POST("/todos", func(c *gin.Context) {
 		template := TodoItem{}
@@ -48,9 +47,7 @@ func main() {
 		c.JSON(http.StatusOK, template)
 	})
 
-	routes.DELETE("/todos", func(c *gin.Context) {
-		c.String(http.StatusNotFound, "")
-	})
+	routes.DELETE("/todos", ok)
 
 	routes.Run(":" + port)
 }
