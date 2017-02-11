@@ -13,7 +13,23 @@ type TodoItem struct {
 	Order int    `json:"order"`
 }
 
+type Todo map[string]*TodoItem
+
+func (t Todo) Create(item TodoItem) {
+	t["1"] = &item
+}
+
+func (t Todo) GetAll() []*TodoItem {
+	items := []*TodoItem{}
+	for _, item := range t {
+		items = append(items, item)
+	}
+	return items
+}
+
 func main() {
+	todo := Todo{}
+
 	port := os.Getenv("PORT")
 
 	ok := func(c *gin.Context) {
@@ -36,7 +52,7 @@ func main() {
 	routes.OPTIONS("/todos", ok)
 
 	routes.GET("/todos", func(c *gin.Context) {
-		c.String(http.StatusOK, "[]")
+		c.JSON(http.StatusOK, todo.GetAll())
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
@@ -46,6 +62,7 @@ func main() {
 			c.AbortWithError(http.StatusBadRequest, err)
 		}
 
+		todo.Create(template)
 		c.JSON(http.StatusOK, template)
 	})
 
