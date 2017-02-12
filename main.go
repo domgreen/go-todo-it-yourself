@@ -59,7 +59,7 @@ func main() {
 
 	cors := func(c *gin.Context) {
 		c.Writer.Header().Add("access-control-allow-origin", "*")
-		c.Writer.Header().Add("access-control-allow-headers", "Content-Type")
+		c.Writer.Header().Add("access-control-allow-headers", "accept, content-type")
 		c.Writer.Header().Add("access-control-allow-methods", "GET,HEAD,POST,DELETE,OPTIONS,PUT,PATCH")
 	}
 
@@ -68,8 +68,16 @@ func main() {
 
 	routes.OPTIONS("/todos", ok)
 
+	routes.OPTIONS("/todos/:id", ok)
+
 	routes.GET("/todos", func(c *gin.Context) {
 		c.JSON(http.StatusOK, todo.GetAll())
+	})
+
+	routes.GET("/todos/:id", func(c *gin.Context) {
+		ID := c.Params.ByName("id")
+		item := todo.Get(ID)
+		c.JSON(http.StatusOK, item)
 	})
 
 	routes.POST("/todos", func(c *gin.Context) {
@@ -87,12 +95,6 @@ func main() {
 	routes.DELETE("/todos", func(c *gin.Context) {
 		todo.DeleteAll()
 		c.String(http.StatusOK, "")
-	})
-
-	routes.GET("/todos/:id", func(c *gin.Context) {
-		ID := c.Param("id")
-		item := todo.Get(ID)
-		c.JSON(http.StatusOK, item)
 	})
 
 	routes.Run(":" + port)
