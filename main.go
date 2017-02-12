@@ -4,20 +4,26 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type TodoItem struct {
+	ID        string
 	Title     string `json:"title"`
 	Order     int    `json:"order"`
 	Completed bool   `json:"completed"`
+	URL       string `json:"url"`
 }
 
 type Todo map[string]*TodoItem
 
-func (t Todo) Create(item TodoItem) {
-	t["1"] = &item
+func (t Todo) Create(item TodoItem, baseURL string) *TodoItem {
+	item.ID = strconv.Itoa(1)
+	item.URL = baseURL + "/" + item.ID
+	t[item.ID] = &item
+	return &item
 }
 
 func (t Todo) GetAll() []*TodoItem {
@@ -26,6 +32,10 @@ func (t Todo) GetAll() []*TodoItem {
 		items = append(items, item)
 	}
 	return items
+}
+
+func (t Todo) Get(ID string) *TodoItem {
+	return t[ID]
 }
 
 func (t Todo) DeleteAll() {
@@ -69,13 +79,20 @@ func main() {
 			c.AbortWithError(http.StatusBadRequest, err)
 		}
 
-		todo.Create(template)
-		c.JSON(http.StatusOK, template)
+		baseURL := c.Request.Host + c.Request.URL.String()
+		item := todo.Create(template, baseURL)
+		c.JSON(http.StatusOK, item)
 	})
 
 	routes.DELETE("/todos", func(c *gin.Context) {
 		todo.DeleteAll()
 		c.String(http.StatusOK, "")
+	})
+
+	routes.GET("/todos/:id", func(c *gin.Context) {
+		ID := c.Param("id")
+		item := todo.Get(ID)
+		c.JSON(http.StatusOK, item)
 	})
 
 	routes.Run(":" + port)
