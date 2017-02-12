@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type TodoItem struct {
@@ -19,8 +19,13 @@ type TodoItem struct {
 
 type Todo map[string]*TodoItem
 
+func (t Todo) NextId() string {
+	id, _ := uuid.NewUUID()
+	return id.String()
+}
+
 func (t Todo) Create(item TodoItem, baseURL string) *TodoItem {
-	item.ID = strconv.Itoa(1)
+	item.ID = t.NextId()
 	item.URL = "http://" + baseURL + "/" + item.ID
 	t[item.ID] = &item
 	return &item
