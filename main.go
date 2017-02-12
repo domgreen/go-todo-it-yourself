@@ -21,7 +21,7 @@ type Todo map[string]*TodoItem
 
 func (t Todo) Create(item TodoItem, baseURL string) *TodoItem {
 	item.ID = strconv.Itoa(1)
-	item.URL = baseURL + "/" + item.ID
+	item.URL = "http://" + baseURL + "/" + item.ID
 	t[item.ID] = &item
 	return &item
 }
