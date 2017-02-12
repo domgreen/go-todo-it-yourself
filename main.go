@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// TodoItem basic structure
 type TodoItem struct {
 	ID        string
 	Title     string `json:"title"`
@@ -17,20 +19,24 @@ type TodoItem struct {
 	URL       string `json:"url"`
 }
 
+// Todo holding all the state
 type Todo map[string]*TodoItem
 
-func (t Todo) NextId() string {
+// NextID Generates the for next id for Todo Items
+func (t Todo) NextID() string {
 	id, _ := uuid.NewUUID()
 	return id.String()
 }
 
+// Create a new TodoItem and add it to the list
 func (t Todo) Create(item TodoItem, baseURL string) *TodoItem {
-	item.ID = t.NextId()
+	item.ID = t.NextID()
 	item.URL = "http://" + baseURL + "/" + item.ID
 	t[item.ID] = &item
 	return &item
 }
 
+// GetAll will return all TodoItems
 func (t Todo) GetAll() []*TodoItem {
 	items := []*TodoItem{}
 	for _, item := range t {
@@ -39,10 +45,21 @@ func (t Todo) GetAll() []*TodoItem {
 	return items
 }
 
+// Get will return a single item based on the Id
 func (t Todo) Get(ID string) *TodoItem {
 	return t[ID]
 }
 
+func (t Todo) Update(ID string, update TodoItem) {
+	item := t.Get(ID)
+	if len(update.Title) > 0 {
+		item.Title = update.Title
+	}
+
+	t[ID] = item
+}
+
+// DeleteAll removes all Todos
 func (t Todo) DeleteAll() {
 	for k := range t {
 		delete(t, k)
@@ -94,6 +111,21 @@ func main() {
 
 		baseURL := c.Request.Host + c.Request.URL.String()
 		item := todo.Create(template, baseURL)
+		c.JSON(http.StatusOK, item)
+	})
+
+	routes.PATCH("/todos/:id", func(c *gin.Context) {
+		template := TodoItem{}
+		err := c.BindJSON(&template)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+		}
+
+		fmt.Print(template.Title)
+		fmt.Println(template.Order)
+
+		todo.Update(c.Params.ByName("id"), template)
+		item := todo.Get(c.Params.ByName("id"))
 		c.JSON(http.StatusOK, item)
 	})
 
