@@ -50,10 +50,15 @@ func (t Todo) Get(ID string) *TodoItem {
 	return t[ID]
 }
 
+// Update single item
 func (t Todo) Update(ID string, update TodoItem) {
 	item := t.Get(ID)
 	if len(update.Title) > 0 {
 		item.Title = update.Title
+	}
+
+	if update.Completed != item.Completed {
+		item.Completed = update.Completed
 	}
 
 	t[ID] = item
@@ -64,6 +69,11 @@ func (t Todo) DeleteAll() {
 	for k := range t {
 		delete(t, k)
 	}
+}
+
+// Delete a single Todo
+func (t Todo) Delete(ID string) {
+	delete(t, ID)
 }
 
 func main() {
@@ -99,6 +109,9 @@ func main() {
 	routes.GET("/todos/:id", func(c *gin.Context) {
 		ID := c.Params.ByName("id")
 		item := todo.Get(ID)
+		if item == nil {
+			c.String(http.StatusNotFound, "")
+		}
 		c.JSON(http.StatusOK, item)
 	})
 
@@ -132,6 +145,11 @@ func main() {
 	routes.DELETE("/todos", func(c *gin.Context) {
 		todo.DeleteAll()
 		c.String(http.StatusOK, "")
+	})
+
+	routes.DELETE("/todos/:id", func(c *gin.Context) {
+		todo.Delete(c.Params.ByName("id"))
+		c.String(http.StatusNotFound, "")
 	})
 
 	routes.Run(":" + port)
