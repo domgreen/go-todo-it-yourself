@@ -57,6 +57,10 @@ func (t Todo) Update(ID string, update TodoItem) {
 		item.Title = update.Title
 	}
 
+	if update.Order != item.Order {
+		item.Order = update.Order
+	}
+
 	if update.Completed != item.Completed {
 		item.Completed = update.Completed
 	}
