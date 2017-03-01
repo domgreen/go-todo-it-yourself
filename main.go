@@ -14,6 +14,5 @@ func main() {
 
 	todo := Todo{}
 	routes := makeRoutes(todo)
-
 	http.ListenAndServe(":"+port, routes)
 }

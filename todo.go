@@ -14,15 +14,14 @@ type TodoItem struct {
 // Todo holding all the state
 type Todo map[string]*TodoItem
 
-// NextID Generates the for next id for Todo Items
-func (t Todo) NextID() string {
+func (t Todo) nextID() string {
 	id, _ := uuid.NewUUID()
 	return id.String()
 }
 
 // Create a new TodoItem and add it to the list
 func (t Todo) Create(item TodoItem, baseURL string) *TodoItem {
-	item.ID = t.NextID()
+	item.ID = t.nextID()
 	item.URL = "http://" + baseURL + "/" + item.ID
 	t[item.ID] = &item
 	return &item
@@ -68,6 +67,12 @@ func (t Todo) DeleteAll() {
 }
 
 // Delete a single Todo
-func (t Todo) Delete(ID string) {
+func (t Todo) Delete(ID string) *TodoItem {
+	result := t.Get(ID)
+	if result == nil {
+		return nil
+	}
+
 	delete(t, ID)
+	return result
 }

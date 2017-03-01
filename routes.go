@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -59,9 +58,6 @@ func makeRoutes(todo Todo) http.Handler {
 			c.AbortWithError(http.StatusBadRequest, err)
 		}
 
-		fmt.Print(template.Title)
-		fmt.Println(template.Order)
-
 		todo.Update(c.Params.ByName("id"), template)
 		item := todo.Get(c.Params.ByName("id"))
 		c.JSON(http.StatusOK, item)
@@ -73,8 +69,11 @@ func makeRoutes(todo Todo) http.Handler {
 	})
 
 	routes.DELETE("/todos/:id", func(c *gin.Context) {
-		todo.Delete(c.Params.ByName("id"))
-		c.String(http.StatusNoContent, "")
+		if todo.Delete(c.Params.ByName("id")) != nil {
+			c.String(http.StatusNoContent, "")
+		} else {
+			c.String(http.StatusNotFound, "")
+		}
 	})
 
 	return routes
