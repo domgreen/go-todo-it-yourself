@@ -124,7 +124,9 @@ func main() {
 
 		baseURL := c.Request.Host + c.Request.URL.String()
 		item := todo.Create(template, baseURL)
-		c.JSON(http.StatusOK, item)
+
+		c.Writer.Header().Set("Location", item.URL)
+		c.JSON(http.StatusCreated, item)
 	})
 
 	routes.PATCH("/todos/:id", func(c *gin.Context) {
@@ -144,12 +146,12 @@ func main() {
 
 	routes.DELETE("/todos", func(c *gin.Context) {
 		todo.DeleteAll()
-		c.String(http.StatusOK, "")
+		c.String(http.StatusNoContent, "")
 	})
 
 	routes.DELETE("/todos/:id", func(c *gin.Context) {
 		todo.Delete(c.Params.ByName("id"))
-		c.String(http.StatusNotFound, "")
+		c.String(http.StatusNoContent, "")
 	})
 
 	routes.Run(":" + port)
